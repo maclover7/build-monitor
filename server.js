@@ -3,7 +3,7 @@ const app = express();
 const request = require('request');
 
 const path = require('path');
-app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use('/', express.static(path.join(__dirname, 'public')));
 
 app.get('/computer', function(req, res) {
   request('https://ci.nodejs.org/computer/api/json?pretty=true').pipe(res);
