@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <title> </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <style>
+  .center { text-align: center; }
+  </style>
+
+  <body>
+    <div class="container">
+      <h1 class="center">build-monitor</h1>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h3 class="center">Build Queue (<span id="queue-length"></span>)</h3>
+          <ul class="list-group" id="queue-items"></ul>
+        </div>
+
+        <div class="col-md-6">
+          <h3 class="center">Offline Machines (<span id="computer-length"></span>)</h3>
+          <ul class="list-group" id="computer-items"></ul>
+        </div>
+      </div>
+
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js"> </script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $.get('/queue', function(response) {
+          // List number of queue items
+          $('#queue-length').html(response.items.length);
+
+          // Create an array with list of "reasons why" jobs are in queue.
+          // Then create a map which counts the number of time each reason appears.
+          var whyArr = [];
+          var whyMap = {};
+
+          for(var item of response.items) {
+            whyArr.push(item.why);
+          }
+
+          whyArr.sort();
+
+          for(var why of whyArr) {
+            if (whyMap[why]) {
+              whyMap[why]++;
+            } else {
+              whyMap[why] = 1;
+            }
+          }
+
+          for(var why in whyMap) {
+            $('#queue-items').append(`<li class="list-group-item">[${whyMap[why]}] ${why}</li>`);
+          }
+        });
+
+        $.get('/computer', function(response) {
+          var offlineMap = {};
+
+          for(var computer of response.computer) {
+            if (computer.offline) {
+              offlineMap[computer.displayName] = computer.offlineCauseReason;
+            }
+          }
+
+          for(var computer in offlineMap) {
+            $('#computer-items').append(`<li class="list-group-item">[${offlineMap[computer]}] ${computer}</li>`);
+          }
+
+          // List number of computers
+          var offlineCount = Object.keys(offlineMap).length;
+          var totalCount = response.computer.filter((c) => {
+            return c._class === 'hudson.slaves.SlaveComputer'
+          }).length;
+
+          $('#computer-length').html(
+            `${offlineCount}/${totalCount}, ${Math.round((offlineCount/totalCount) * 100)}%`
+          );
+        });
+      });
+    </script>
+  </body>
+</html>

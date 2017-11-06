@@ -1,0 +1,13 @@
+{
+  "name": "build-monitor",
+  "version": "1.0.0",
+  "description": "A dashboard to monitor the status of ci.nodejs.org.",
+  "main": "server.js",
+  "repository": "https://github.com/maclover7/build-monitor",
+  "author": "Jon Moss <me@jonathanmoss.me>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.2",
+    "request": "^2.83.0"
+  }
+}
