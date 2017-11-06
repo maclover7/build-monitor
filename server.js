@@ -13,6 +13,6 @@ app.get('/queue', function(req, res) {
   request('https://ci.nodejs.org/queue/api/json').pipe(res);
 });
 
-app.listen(3000, function() {
+app.listen(process.env.PORT || 3000 , function() {
   console.log('Listening...');
 });
