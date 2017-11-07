@@ -65,7 +65,7 @@
           }
 
           for(var computer in offlineMap) {
-            $('#computer-items').append(`<li class="list-group-item">[${offlineMap[computer]}] ${computer}</li>`);
+            $('#computer-items').append(`<li class="list-group-item">[${offlineMap[computer] || 'manually removed'}] ${computer}</li>`);
           }
 
           // List number of computers
