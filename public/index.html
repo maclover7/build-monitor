@@ -5,7 +5,7 @@
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
   <style>
-  .center { text-align: center; }
+    .center { text-align: center; }
   </style>
 
   <body>
@@ -33,25 +33,25 @@
 
           // Create an array with list of "reasons why" jobs are in queue.
           // Then create a map which counts the number of time each reason appears.
+          // Sorted with highest number of common reason at the top, and decreases after.
           var whyArr = [];
-          var whyMap = {};
 
           for(var item of response.items) {
-            whyArr.push(item.why);
-          }
+            var existingItem = whyArr.filter(function(i) {
+              return i.reason === item.why;
+            })[0];
 
-          whyArr.sort();
-
-          for(var why of whyArr) {
-            if (whyMap[why]) {
-              whyMap[why]++;
+            if (existingItem) {
+              existingItem.count++;
             } else {
-              whyMap[why] = 1;
+              whyArr.push({ reason: item.why, count: 1 });
             }
           }
 
-          for(var why in whyMap) {
-            $('#queue-items').append(`<li class="list-group-item">[${whyMap[why]}] ${why}</li>`);
+          whyArr.sort(function(a, b) { return b.count - a.count; });
+
+          for(var why of whyArr) {
+            $('#queue-items').append(`<li class="list-group-item">[${why.count}] ${why.reason}</li>`);
           }
         });
 
