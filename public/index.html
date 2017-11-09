@@ -58,26 +58,12 @@
         });
 
         $.get('/computer', function(response) {
-          var offlineMap = {};
-
-          for(var computer of response.computer) {
-            if (computer.offline) {
-              offlineMap[computer.displayName] = computer.offlineCauseReason;
-            }
+          for(var computer of response.computers) {
+            $('#computer-items').append(`<li class="list-group-item">[${computer.reason}] ${computer.name}</li>`);
           }
-
-          for(var computer in offlineMap) {
-            $('#computer-items').append(`<li class="list-group-item">[${offlineMap[computer] || 'manually removed'}] ${computer}</li>`);
-          }
-
-          // List number of computers
-          var offlineCount = Object.keys(offlineMap).length;
-          var totalCount = response.computer.filter((c) => {
-            return c._class === 'hudson.slaves.SlaveComputer'
-          }).length;
 
           $('#computer-length').html(
-            `${offlineCount}/${totalCount}, ${Math.round((offlineCount/totalCount) * 100)}%`
+            `${response.offlineCount}/${response.totalCount}, ${Math.round((response.offlineCount/response.totalCount) * 100)}%`
           );
         });
       });
