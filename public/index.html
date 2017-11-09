@@ -46,17 +46,15 @@
           queue: []
         },
         mounted: function() {
-          that = this;
-
           axios.get('/computer').then(function(response) {
-            that.computerOfflineCount = response.data.offlineCount;
-            that.computerTotalCount = response.data.totalCount;
-            that.computers = response.data.computers;
-          })
+            this.computerOfflineCount = response.data.offlineCount;
+            this.computerTotalCount = response.data.totalCount;
+            this.computers = response.data.computers;
+          }.bind(this));
 
           axios.get('/queue').then(function(response) {
-            that.queue = response.data.queue;
-          });
+            this.queue = response.data.queue;
+          }.bind(this));
         },
         computed: {
           computerHeadlineNumber: function() {
