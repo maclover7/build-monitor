@@ -31,29 +31,10 @@
       $(document).ready(function() {
         $.get('/queue', function(response) {
           // List number of queue items
-          $('#queue-length').html(response.items.length);
+          $('#queue-length').html(response.queue.length);
 
-          // Create an array with list of "reasons why" jobs are in queue.
-          // Then create a map which counts the number of time each reason appears.
-          // Sorted with highest number of common reason at the top, and decreases after.
-          var whyArr = [];
-
-          for(var item of response.items) {
-            var existingItem = whyArr.filter(function(i) {
-              return i.reason === item.why;
-            })[0];
-
-            if (existingItem) {
-              existingItem.count++;
-            } else {
-              whyArr.push({ reason: item.why, count: 1 });
-            }
-          }
-
-          whyArr.sort(function(a, b) { return b.count - a.count; });
-
-          for(var why of whyArr) {
-            $('#queue-items').append(`<li class="list-group-item">[${why.count}] ${why.reason}</li>`);
+          for(var queueItem of response.queue) {
+            $('#queue-items').append(`<li class="list-group-item">[${queueItem.count}] ${queueItem.reason}</li>`);
           }
         });
 

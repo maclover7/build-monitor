@@ -27,7 +27,30 @@ app.get('/computer', function(req, res) {
 });
 
 app.get('/queue', function(req, res) {
-  request('https://ci.nodejs.org/queue/api/json').pipe(res);
+  request({ url: 'https://ci.nodejs.org/queue/api/json', json: true }, (err, _, apiResponse) => {
+    // Create an array with list of "reasons why" jobs are in queue.
+    // Then create a map which counts the number of time each reason appears.
+    // Sorted with highest number of common reason at the top, and decreases after.
+    var queue = [];
+
+    for(var item of apiResponse.items) {
+      var existingItem = queue.filter(function(i) {
+        return i.reason === item.why;
+      })[0];
+
+      if (existingItem) {
+        existingItem.count++;
+      } else {
+        queue.push({ reason: item.why, count: 1 });
+      }
+    }
+
+    queue.sort(function(a, b) { return b.count - a.count; });
+
+    res.json({
+      queue: queue
+    });
+  });
 });
 
 app.listen(process.env.PORT || 3000 , function() {
