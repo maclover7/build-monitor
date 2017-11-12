@@ -14,7 +14,7 @@
 
       <div id="app" class="row">
         <div class="col-md-6">
-          <h3 class="center">Build Queue ({{ queue.length }})</h3>
+          <h3 class="center">Build Queue ({{ queueLength }})</h3>
           <ul class="list-group">
             <li v-for="queueItem in queue" class="list-group-item">
               [{{ queueItem.count }}] {{ queueItem.reason }}
@@ -67,6 +67,11 @@
 
               return `${this.computerOfflineCount}/${this.computerTotalCount}, ${computerOfflinePercentage}%`;
             }
+          },
+          queueLength: function() {
+            return this.queue.reduce(function(a, b) {
+              return a + b.count;
+            }, 0);
           }
         }
       });
