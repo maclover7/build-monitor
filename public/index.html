@@ -40,13 +40,16 @@
       var vm = new Vue({
         el: '#app',
         data: {
+          computerHeadlineNumber: '',
           computerOfflineCount: '',
           computerTotalCount: '',
           computers: [],
-          queue: []
+          queue: [],
+          queueLength: ''
         },
         mounted: function() {
           axios.get('/computer').then(function(response) {
+            this.computerHeadlineNumber = response.data.computerOfflineHeadline;
             this.computerOfflineCount = response.data.offlineCount;
             this.computerTotalCount = response.data.totalCount;
             this.computers = response.data.computers;
@@ -54,25 +57,8 @@
 
           axios.get('/queue').then(function(response) {
             this.queue = response.data.queue;
+            this.queueLength = response.data.queueLength;
           }.bind(this));
-        },
-        computed: {
-          computerHeadlineNumber: function() {
-            if (!this.computerTotalCount) {
-              return '';
-            } else {
-              var computerOfflinePercentage = Math.round(
-                  (this.computerOfflineCount / this.computerTotalCount)
-                  * 100);
-
-              return `${this.computerOfflineCount}/${this.computerTotalCount}, ${computerOfflinePercentage}%`;
-            }
-          },
-          queueLength: function() {
-            return this.queue.reduce(function(a, b) {
-              return a + b.count;
-            }, 0);
-          }
         }
       });
     </script>
